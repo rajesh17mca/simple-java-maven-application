@@ -9,6 +9,15 @@ pipeline {
     maven 'Maven'
   }
 
+  triggers {
+    githubPush()
+  }
+
+  options {
+    retry(5)
+    timeout(time: 30, unit: 'SECONDS')
+  }
+
   stages {
     stage('build') {
       steps {

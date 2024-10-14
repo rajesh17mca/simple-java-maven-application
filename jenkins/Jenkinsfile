@@ -30,7 +30,7 @@ pipeline {
 
     stage ('deploy') {
       steps {
-        echi "Thhis is Deploy stage"
+        echo "Thhis is Deploy stage"
       }
     }
   }

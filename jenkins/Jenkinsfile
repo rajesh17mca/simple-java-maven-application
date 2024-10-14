@@ -18,6 +18,10 @@ pipeline {
     githubPush()
   }
 
+  parameters {
+    string defaultValue: 'Rajesh', description: 'Default param value',  : 'Name'
+  }
+
   options {
     retry(5)
     timeout(time: 30, unit: 'SECONDS')
@@ -45,7 +49,7 @@ pipeline {
 
     stage ('deploy') {
       steps {
-        echo "Thhis is Deploy stage"
+        echo "Thhis is Deploy stage ${params.Name}"
       }
     }
   }

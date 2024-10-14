@@ -5,6 +5,11 @@ pipeline {
   //   label 'DevServer'
   // }
 
+  environment {
+    NAME = "Rajesh"
+    ENV = "PROD"
+  }
+
   tools {
     maven 'Maven'
   }
@@ -21,20 +26,20 @@ pipeline {
   stages {
     stage('build') {
       steps {
-        echo "This is Build stage"
-        sh 'mvn clean package'
+        echo "This is Build stage in $ENV"
+        // sh 'mvn clean package'
       }
 
-      post {
-        success {
-          archiveArtifacts artifacts: '**/target/*.war'
-        }
-      }
+      // post {
+      //   success {
+      //     archiveArtifacts artifacts: '**/target/*.war'
+      //   }
+      // }
     }
 
     stage('test') {
       steps {
-        echo "This is Testing stage"
+        echo "This is Testing stage by $NAME"
       }
     }
 

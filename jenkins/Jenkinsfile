@@ -1,12 +1,12 @@
 pipeline {
-  // agent none
-  agent {
-    label 'DevServer'
-  }
+  agent none
+  // agent {
+  //   label 'DevServer'
+  // }
 
-  tools {
-    maven 'mymaven'
-  }
+  // tools {
+  //   maven 'mymaven'
+  // }
 
   stages {
     stage('build') {

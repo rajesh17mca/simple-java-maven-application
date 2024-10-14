@@ -35,12 +35,6 @@ pipeline {
       }
     }
 
-    stage('test') {
-      steps {
-        echo "This is Testing stage by $NAME"
-      }
-    }
-
     stage ('deploy') {
       steps {
         echo "Thhis is Deploy stage ${params.SurName}"

@@ -19,7 +19,7 @@ pipeline {
   }
 
   parameters {
-    string defaultValue: 'Rajesh', description: 'Default param value', name: 'Name'
+    string defaultValue: 'Kamireddy', description: 'Default param value', name: 'SurName'
   }
 
   options {
@@ -33,12 +33,6 @@ pipeline {
         echo "This is Build stage in $ENV"
         // sh 'mvn clean package'
       }
-
-      // post {
-      //   success {
-      //     archiveArtifacts artifacts: '**/target/*.war'
-      //   }
-      // }
     }
 
     stage('test') {
@@ -49,8 +43,29 @@ pipeline {
 
     stage ('deploy') {
       steps {
-        echo "Thhis is Deploy stage ${params.Name}"
+        echo "Thhis is Deploy stage ${params.SurName}"
       }
+    }
+
+    // Parallel Stage execution
+    stage('test') {
+      parallel {
+        stage('testA'){
+          steps {
+            echo "This is TestA and Sur name is ${params.SurName}"
+          }
+        }
+        stage('testB'){
+          steps{
+            echo "This is TestB and Name is $NAME"
+          }
+        }
+      }
+      // post {
+      //   success {
+      //     archiveArtifacts artifacts: '**/target/*.war'
+      //   }
+      // }
     }
   }
 }

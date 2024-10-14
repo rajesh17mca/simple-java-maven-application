@@ -20,6 +20,7 @@ pipeline {
 
   parameters {
     string defaultValue: 'Kamireddy', description: 'Default param value', name: 'SurName'
+    choice choices: ['PROD', 'DEV'], name: 'select_env'
   }
 
   options {
@@ -31,7 +32,7 @@ pipeline {
     stage('build') {
       steps {
         echo "This is Build stage in $ENV"
-        // sh 'mvn clean package'
+        sh 'mvn clean package -DskipTests=true'
       }
     }
 
@@ -45,11 +46,17 @@ pipeline {
     stage('test') {
       parallel {
         stage('testA'){
+          agent {
+            label 'DevServer'
+          }
           steps {
             echo "This is TestA and Sur name is ${params.SurName}"
           }
         }
         stage('testB'){
+          agent {
+            label 'ProdServer'
+          }
           steps{
             echo "This is TestB and Name is $NAME"
           }
@@ -60,6 +67,60 @@ pipeline {
       //     archiveArtifacts artifacts: '**/target/*.war'
       //   }
       // }
+      post {
+        success {
+          dir("webapp/target/"){
+            stash name:"maven-build-rajesh", includes: "*.war"
+          }
+        }
+      }
+    }
+
+    // Deploying to Dev Env
+    stage('deploy_dev'){
+      when {
+        expression {
+          params.select_env == 'DEV'
+        }
+        beforeAgent true
+      }
+      agent {
+        label 'DevServer'
+      }
+      steps {
+        dir("/var/www/html"){
+          unstash "maven-build-rajesh"
+        }
+        sh """
+        cd /var/www/html/
+        jar -xvf webapp.war
+        """
+      }
+    }
+
+    // Deploying to PROD Env
+    stage('deploy_dev'){
+      when {
+        expression {
+          params.select_env == 'PROD'
+        }
+        beforeAgent true
+      }
+      agent {
+        label 'ProdServer'
+      }
+      steps {
+        timeout(time:5, unit:'DAYS'){
+          input message: 'Deployment Approved?'
+          dir("/var/www/html"){
+            unstash "maven-build-rajesh"
+          }
+          sh """
+          cd /var/www/html/
+          jar -xvf webapp.war
+          """
+        }
+      }
     }
   }
 }
